@@ -1,5 +1,7 @@
 # ruby/setup-ruby
 
+An action to download a prebuilt Ruby and add it to the PATH in 5 seconds
+
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/ruby/setup-ruby](https://github.com/ruby/setup-ruby).
 
 ## Versions

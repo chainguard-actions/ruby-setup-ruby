@@ -1,5 +1,6 @@
 {
   "owner": "ruby",
   "name": "setup-ruby",
-  "visibility": ""
+  "visibility": "internal",
+  "description": "An action to download a prebuilt Ruby and add it to the PATH in 5 seconds"
 }
