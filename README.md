@@ -1,6 +1,12 @@
 # ruby/setup-ruby
 
-Hardened GitHub Action by [Chainguard](https://www.chainguard.dev).
+Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/ruby/setup-ruby](https://github.com/ruby/setup-ruby).
+
+## Versions
+
+| Version | Tag | Upstream commit |
+|---------|-----|-----------------|
+| v1.292.0 | [`v1.292.0`](https://github.com/chainguard-actions/setup-ruby/tree/v1.292.0) | — |
 
 ## Privacy
 
