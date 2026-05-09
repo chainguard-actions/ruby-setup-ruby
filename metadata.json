@@ -2,5 +2,6 @@
   "owner": "ruby",
   "name": "setup-ruby",
   "visibility": "internal",
-  "description": "An action to download a prebuilt Ruby and add it to the PATH in 5 seconds"
+  "description": "An action to download a prebuilt Ruby and add it to the PATH in 5 seconds",
+  "block_publish": false
 }
