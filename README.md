@@ -8,7 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
-| v1.292.0 | [`v1.292.0`](https://github.com/chainguard-actions/ruby--setup-ruby/tree/v1.292.0) | — |
+| v1.292.0 | [`v1.292.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.292.0) | — |
 
 ## Privacy
 
