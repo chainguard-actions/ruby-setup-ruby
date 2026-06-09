@@ -1,4 +1,4 @@
-name: Test working-directory input
+name: Test self-hosted and windows-toolchain inputs
 on:
   workflow_dispatch:
 jobs:
@@ -6,14 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create working directory with .ruby-version file
-        run: |
-          mkdir -p /tmp/ruby-test-dir
-          echo "3.2" > /tmp/ruby-test-dir/.ruby-version
       - id: action
         uses: .
         with:
-          working-directory: '/tmp/ruby-test-dir'
+          ruby-version: '3.2'
+          self-hosted: 'false'
+          windows-toolchain: 'none'
       - name: Assert ruby-prefix output is set
         env:
           ACTUAL: ${{ steps.action.outputs.ruby-prefix }}

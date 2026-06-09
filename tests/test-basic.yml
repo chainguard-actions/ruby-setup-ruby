@@ -14,12 +14,12 @@ jobs:
         env:
           ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
         run: |
-          echo "ruby-prefix: $ACTUAL"
+          echo "actual: $ACTUAL"
           if [ -z "$ACTUAL" ]; then
-            echo "FAIL: ruby-prefix output is empty"
+            echo "FAIL: ruby-prefix output was empty"
             exit 1
           fi
-          echo "PASS"
+          echo "PASS: ruby-prefix=$ACTUAL"
       - name: Assert ruby is on PATH
         run: |
           ruby --version
