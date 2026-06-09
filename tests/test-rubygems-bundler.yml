@@ -12,7 +12,6 @@ jobs:
           ruby-version: '3.2'
           rubygems: 'latest'
           bundler: 'latest'
-          cache-version: 'v1'
       - name: Assert ruby-prefix output is set
         env:
           ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
@@ -22,12 +21,12 @@ jobs:
             echo "FAIL: ruby-prefix output was empty"
             exit 1
           fi
-          echo "PASS"
+          echo "PASS: ruby-prefix=$ACTUAL"
       - name: Assert ruby is on PATH
         run: |
           ruby --version
           echo "PASS: ruby is available"
-      - name: Assert bundler is available
+      - name: Assert bundler is on PATH
         run: |
           bundle --version
           echo "PASS: bundler is available"

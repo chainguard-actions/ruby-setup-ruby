@@ -21,7 +21,7 @@ jobs:
             echo "FAIL: ruby-prefix output was empty"
             exit 1
           fi
-          echo "PASS"
+          echo "PASS: ruby-prefix=$ACTUAL"
       - name: Assert ruby is on PATH
         run: |
           ruby --version
