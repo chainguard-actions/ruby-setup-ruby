@@ -1,0 +1,31 @@
+name: Test working-directory input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create working directory with .ruby-version
+        run: |
+          mkdir -p /tmp/myapp
+          echo "3.2" > /tmp/myapp/.ruby-version
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.2'
+          working-directory: '/tmp/myapp'
+      - name: Assert ruby-prefix output is set
+        env:
+          ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: ruby-prefix output was empty"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert ruby is on PATH
+        run: |
+          ruby --version
+          echo "PASS: ruby is available"
