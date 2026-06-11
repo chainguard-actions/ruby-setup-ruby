@@ -1,4 +1,4 @@
-name: Test self-hosted input
+name: Test bundler input
 on:
   workflow_dispatch:
 jobs:
@@ -10,8 +10,7 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
-          self-hosted: 'false'
-          bundler: 'none'
+          bundler: 'latest'
           rubygems: 'default'
       - name: Assert ruby-prefix output is set
         env:
@@ -23,7 +22,7 @@ jobs:
             exit 1
           fi
           echo "PASS"
-      - name: Assert ruby is available
+      - name: Assert bundler is available
         run: |
-          ruby --version
+          bundle --version
           echo "PASS"

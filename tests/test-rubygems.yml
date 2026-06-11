@@ -1,4 +1,4 @@
-name: Test self-hosted input
+name: Test rubygems input
 on:
   workflow_dispatch:
 jobs:
@@ -10,9 +10,8 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
-          self-hosted: 'false'
+          rubygems: 'latest'
           bundler: 'none'
-          rubygems: 'default'
       - name: Assert ruby-prefix output is set
         env:
           RUBY_PREFIX: ${{ steps.action.outputs.ruby-prefix }}
@@ -23,7 +22,7 @@ jobs:
             exit 1
           fi
           echo "PASS"
-      - name: Assert ruby is available
+      - name: Assert gem is available
         run: |
-          ruby --version
+          gem --version
           echo "PASS"

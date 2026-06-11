@@ -1,4 +1,4 @@
-name: Test self-hosted input
+name: Test windows-toolchain input
 on:
   workflow_dispatch:
 jobs:
@@ -10,7 +10,7 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
-          self-hosted: 'false'
+          windows-toolchain: 'none'
           bundler: 'none'
           rubygems: 'default'
       - name: Assert ruby-prefix output is set

@@ -10,17 +10,20 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
+          bundler: 'default'
+          rubygems: 'default'
       - name: Assert ruby-prefix output is set
         env:
-          ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
+          RUBY_PREFIX: ${{ steps.action.outputs.ruby-prefix }}
         run: |
-          echo "actual: $ACTUAL"
-          if [ -z "$ACTUAL" ]; then
-            echo "FAIL: ruby-prefix output was empty"
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix=$ACTUAL"
+          echo "PASS"
       - name: Assert ruby is on PATH
         run: |
+          which ruby
           ruby --version
-          echo "PASS: ruby is available"
+          echo "PASS"
