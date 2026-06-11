@@ -1,0 +1,33 @@
+name: Test rubygems and bundler inputs
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.2'
+          rubygems: 'latest'
+          bundler: 'latest'
+          cache-version: 'v1'
+      - name: Assert ruby-prefix output is set
+        env:
+          ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: ruby-prefix output was empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix=$ACTUAL"
+      - name: Assert ruby is on PATH
+        run: |
+          ruby --version
+          echo "PASS: ruby is available"
+      - name: Assert bundler is available
+        run: |
+          bundle --version
+          echo "PASS: bundler is available"
