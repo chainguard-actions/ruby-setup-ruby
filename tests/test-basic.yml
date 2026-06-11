@@ -10,11 +10,6 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
-          bundler: 'default'
-          rubygems: 'default'
-          cache-version: 'v1'
-          self-hosted: 'false'
-          windows-toolchain: 'none'
       - name: Assert ruby-prefix output is set
         env:
           RUBY_PREFIX: ${{ steps.action.outputs.ruby-prefix }}
@@ -25,11 +20,7 @@ jobs:
             exit 1
           fi
           echo "PASS"
-      - name: Assert ruby is on PATH
+      - name: Assert ruby is available
         run: |
           ruby --version
-          if [ $? -ne 0 ]; then
-            echo "FAIL: ruby not found on PATH"
-            exit 1
-          fi
           echo "PASS"

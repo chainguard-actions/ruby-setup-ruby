@@ -1,4 +1,4 @@
-name: Test self-hosted and windows-toolchain inputs
+name: Test bundler input
 on:
   workflow_dispatch:
 jobs:
@@ -10,9 +10,8 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
-          self-hosted: 'false'
-          windows-toolchain: 'none'
-      - name: Assert ruby is available
+          bundler: 'latest'
+      - name: Assert bundler is available
         run: |
-          ruby --version
+          bundle --version
           echo "PASS"

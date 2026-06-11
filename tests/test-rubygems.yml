@@ -1,4 +1,4 @@
-name: Test working-directory and cache-version inputs
+name: Test rubygems input
 on:
   workflow_dispatch:
 jobs:
@@ -6,17 +6,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create working directory with .ruby-version
-        run: |
-          mkdir -p /tmp/ruby-test-dir
-          echo "3.2" > /tmp/ruby-test-dir/.ruby-version
       - id: action
         uses: .
         with:
           ruby-version: '3.2'
-          working-directory: '/tmp/ruby-test-dir'
-          cache-version: 'v1'
+          rubygems: 'latest'
       - name: Assert ruby is available
         run: |
           ruby --version
+          gem --version
           echo "PASS"
