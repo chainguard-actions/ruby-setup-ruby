@@ -1,4 +1,4 @@
-name: Test working-directory and cache-version inputs
+name: Test working-directory and windows-toolchain options
 on:
   workflow_dispatch:
 jobs:
@@ -8,24 +8,25 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Create working directory with .ruby-version
         run: |
-          mkdir -p myapp
-          echo "3.2" > myapp/.ruby-version
+          mkdir -p /tmp/ruby-test-dir
+          echo "3.2" > /tmp/ruby-test-dir/.ruby-version
       - id: action
         uses: .
         with:
           ruby-version: '3.2'
-          working-directory: './myapp'
-          cache-version: 'v1'
+          working-directory: '/tmp/ruby-test-dir'
+          windows-toolchain: 'none'
+          bundler: 'none'
       - name: Assert ruby-prefix output is set
         env:
-          ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
+          RUBY_PREFIX: ${{ steps.action.outputs.ruby-prefix }}
         run: |
-          echo "actual: $ACTUAL"
-          if [ -z "$ACTUAL" ]; then
-            echo "FAIL: ruby-prefix output was empty"
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix=$ACTUAL"
+          echo "PASS"
       - name: Assert ruby is on PATH
         run: |
           ruby --version
