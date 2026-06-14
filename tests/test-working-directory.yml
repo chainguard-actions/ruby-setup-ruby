@@ -1,0 +1,34 @@
+name: Test working-directory input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create working directory with .ruby-version
+        run: |
+          mkdir -p /tmp/myapp
+          echo "3.2" > /tmp/myapp/.ruby-version
+      - id: setup-ruby
+        uses: .
+        with:
+          working-directory: '/tmp/myapp'
+      - name: Assert ruby-prefix output is set
+        env:
+          RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert ruby is available
+        run: |
+          ruby --version
+          if [ $? -ne 0 ]; then
+            echo "FAIL: ruby not found in PATH"
+            exit 1
+          fi
+          echo "PASS"
