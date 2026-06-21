@@ -13,6 +13,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v1.311.0 | [`v1.311.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.311.0) | [`a99ac84`](https://github.com/ruby/setup-ruby/commit/a99ac844649df2596b52b4db087cfa0881b172af) |
 | v1.312.0 | [`v1.312.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.312.0) | [`12fd324`](https://github.com/ruby/setup-ruby/commit/12fd324f1d0b43274fdc8130f6980590a667c455) |
 | v1.313.0 | [`v1.313.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.313.0) | [`89f9052`](https://github.com/ruby/setup-ruby/commit/89f90524b88a01fe6e0b732220432cc6142926af) |
+| v1.314.0 | [`v1.314.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.314.0) | [`9eb537c`](https://github.com/ruby/setup-ruby/commit/9eb537ca036ebaed86729dcb9309076e4c5c3b74) |
 
 ## Privacy
 
