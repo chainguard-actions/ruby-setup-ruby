@@ -1,0 +1,35 @@
+name: Test Ruby setup with latest RubyGems
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup-ruby
+        uses: .
+        with:
+          ruby-version: '3.3'
+          rubygems: 'latest'
+          bundler: 'none'
+          bundler-cache: 'false'
+      - name: Assert ruby-prefix output is set
+        env:
+          RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is set"
+      - name: Assert ruby version is 3.3.x
+        run: |
+          ruby --version
+          ruby --version | grep -E "ruby 3\.3\." || { echo "FAIL: expected Ruby 3.3.x"; exit 1; }
+          echo "PASS"
+      - name: Assert gem is available and updated
+        run: |
+          which gem
+          gem --version
+          echo "PASS: gem is available"

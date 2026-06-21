@@ -1,0 +1,34 @@
+name: Test Ruby setup with bundler version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup-ruby
+        uses: .
+        with:
+          ruby-version: '3.1'
+          bundler: 'latest'
+          bundler-cache: 'false'
+      - name: Assert ruby-prefix output is set
+        env:
+          RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is set"
+      - name: Assert bundler is available
+        run: |
+          which bundle
+          bundle --version
+          echo "PASS: bundler is available"
+      - name: Assert ruby version is 3.1.x
+        run: |
+          ruby --version
+          ruby --version | grep -E "ruby 3\.1\." || { echo "FAIL: expected Ruby 3.1.x"; exit 1; }
+          echo "PASS"
