@@ -1,0 +1,29 @@
+name: Test bundler version input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.2'
+          bundler: 'latest'
+      - name: Assert ruby is available
+        run: |
+          echo "ruby version: $(ruby --version)"
+          if ! ruby --version; then
+            echo "FAIL: ruby not found"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert bundler is available
+        run: |
+          echo "bundler version: $(bundle --version)"
+          if ! bundle --version; then
+            echo "FAIL: bundler not found"
+            exit 1
+          fi
+          echo "PASS"
