@@ -1,0 +1,51 @@
+name: Test Ruby setup with bundler cache
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup-ruby
+        uses: .
+        with:
+          ruby-version: '3.2'
+          bundler: 'latest'
+          bundler-cache: 'true'
+          working-directory: 'tests/fixtures/bundler-cache'
+      - name: Assert ruby is available
+        run: |
+          echo "Ruby version:"
+          ruby --version
+          if ! ruby --version | grep -q "ruby 3.2"; then
+            echo "FAIL: expected ruby 3.2.x"
+            exit 1
+          fi
+          echo "PASS: ruby 3.2 is available"
+      - name: Assert bundler is available
+        run: |
+          echo "Bundler version:"
+          bundle --version
+          if ! bundle --version > /dev/null 2>&1; then
+            echo "FAIL: bundler is not available"
+            exit 1
+          fi
+          echo "PASS: bundler is available"
+      - name: Assert rake gem is installed
+        working-directory: tests/fixtures/bundler-cache
+        run: |
+          if ! bundle exec rake --version > /dev/null 2>&1; then
+            echo "FAIL: rake gem is not installed via bundler"
+            exit 1
+          fi
+          echo "PASS: rake gem is installed: $(bundle exec rake --version)"
+      - name: Assert ruby-prefix output is set
+        env:
+          ACTUAL: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "actual ruby-prefix: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is set to $ACTUAL"
