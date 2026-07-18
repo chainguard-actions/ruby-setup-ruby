@@ -1,4 +1,4 @@
-name: Test Ruby setup from .ruby-version file
+name: Test Ruby setup with bundler none
 on:
   workflow_dispatch:
 jobs:
@@ -6,24 +6,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create .ruby-version file in working directory
-        run: |
-          echo "3.2" > tests/fixtures/ruby-version-dir/.ruby-version
-          cat tests/fixtures/ruby-version-dir/.ruby-version
       - id: setup-ruby
         uses: .
         with:
-          working-directory: 'tests/fixtures/ruby-version-dir'
+          ruby-version: '3.2'
           bundler: 'none'
-      - name: Assert ruby is installed from .ruby-version file
+          rubygems: 'default'
+      - name: Assert ruby is installed
         run: |
           echo "Ruby version:"
           ruby --version
           if ! ruby --version | grep -q "ruby 3.2"; then
-            echo "FAIL: expected Ruby 3.2 (from .ruby-version) but got: $(ruby --version)"
+            echo "FAIL: expected Ruby 3.2 but got: $(ruby --version)"
             exit 1
           fi
-          echo "PASS: Ruby 3.2 installed from .ruby-version file"
+          echo "PASS: Ruby 3.2 is installed"
       - name: Assert ruby-prefix output is set
         env:
           RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
@@ -34,3 +31,12 @@ jobs:
             exit 1
           fi
           echo "PASS: ruby-prefix is $RUBY_PREFIX"
+      - name: Assert ruby can run basic code
+        run: |
+          RESULT=$(ruby -e 'puts 1 + 1')
+          echo "Ruby computation result: $RESULT"
+          if [ "$RESULT" != "2" ]; then
+            echo "FAIL: expected '2' but got '$RESULT'"
+            exit 1
+          fi
+          echo "PASS: Ruby can execute code"

@@ -11,31 +11,31 @@ jobs:
         with:
           ruby-version: '3.1'
           bundler: 'latest'
-      - name: Assert ruby is available
+      - name: Assert ruby is installed
         run: |
           echo "Ruby version:"
           ruby --version
           if ! ruby --version | grep -q "ruby 3.1"; then
-            echo "FAIL: expected ruby 3.1.x"
+            echo "FAIL: expected Ruby 3.1 but got: $(ruby --version)"
             exit 1
           fi
-          echo "PASS: ruby 3.1 is available"
-      - name: Assert bundler is available
+          echo "PASS: Ruby 3.1 is installed"
+      - name: Assert bundler is installed
         run: |
           echo "Bundler version:"
           bundle --version
           if ! bundle --version > /dev/null 2>&1; then
-            echo "FAIL: bundler is not available"
+            echo "FAIL: bundle command not available"
             exit 1
           fi
           echo "PASS: bundler is available"
       - name: Assert ruby-prefix output is set
         env:
-          ACTUAL: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+          RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
         run: |
-          echo "actual ruby-prefix: $ACTUAL"
-          if [ -z "$ACTUAL" ]; then
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
             echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix is set to $ACTUAL"
+          echo "PASS: ruby-prefix is $RUBY_PREFIX"

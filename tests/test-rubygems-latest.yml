@@ -9,34 +9,34 @@ jobs:
       - id: setup-ruby
         uses: .
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.3'
           rubygems: 'latest'
           bundler: 'none'
-      - name: Assert ruby is available
+      - name: Assert ruby is installed
         run: |
           echo "Ruby version:"
           ruby --version
-          if ! ruby --version | grep -q "ruby 3.2"; then
-            echo "FAIL: expected ruby 3.2.x"
+          if ! ruby --version | grep -q "ruby 3.3"; then
+            echo "FAIL: expected Ruby 3.3 but got: $(ruby --version)"
             exit 1
           fi
-          echo "PASS: ruby 3.2 is available"
+          echo "PASS: Ruby 3.3 is installed"
       - name: Assert gem is available and updated
         run: |
           echo "Gem version:"
           gem --version
           if ! gem --version > /dev/null 2>&1; then
-            echo "FAIL: gem is not available"
+            echo "FAIL: gem command not available"
             exit 1
           fi
           echo "PASS: gem is available with version $(gem --version)"
       - name: Assert ruby-prefix output is set
         env:
-          ACTUAL: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+          RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
         run: |
-          echo "actual ruby-prefix: $ACTUAL"
-          if [ -z "$ACTUAL" ]; then
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
             echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix is set to $ACTUAL"
+          echo "PASS: ruby-prefix is $RUBY_PREFIX"
