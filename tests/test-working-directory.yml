@@ -14,21 +14,21 @@ jobs:
         uses: .
         with:
           working-directory: '/tmp/myapp'
-      - name: Assert ruby is available
-        run: |
-          echo "ruby version: $(ruby --version)"
-          if ! ruby --version; then
-            echo "FAIL: ruby not found"
-            exit 1
-          fi
-          echo "PASS"
       - name: Assert ruby-prefix output is set
         env:
           ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
         run: |
-          echo "ruby-prefix: $ACTUAL"
+          echo "actual: $ACTUAL"
           if [ -z "$ACTUAL" ]; then
             echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix=$ACTUAL"
+      - name: Assert ruby version matches .ruby-version file
+        run: |
+          ruby --version
+          if ! ruby --version | grep -q '3\.2'; then
+            echo "FAIL: expected Ruby 3.2 (from .ruby-version in working-directory)"
             exit 1
           fi
           echo "PASS"
