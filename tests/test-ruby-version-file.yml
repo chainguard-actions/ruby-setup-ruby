@@ -6,30 +6,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create .ruby-version file
+      - name: Create .ruby-version file in working directory
         run: |
-          echo "3.2" > .ruby-version
-          cat .ruby-version
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/ruby-version-dir"
+          echo "3.2" > "$GITHUB_WORKSPACE/tests/fixtures/ruby-version-dir/.ruby-version"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/ruby-version-dir/.ruby-version"
       - id: setup-ruby
         uses: .
         with:
-          bundler-cache: 'false'
-      - name: Assert ruby-prefix output is set
-        env:
-          ACTUAL: ${{ steps.setup-ruby.outputs.ruby-prefix }}
-        run: |
-          echo "ruby-prefix: $ACTUAL"
-          if [ -z "$ACTUAL" ]; then
-            echo "FAIL: ruby-prefix output is empty"
-            exit 1
-          fi
-          echo "PASS: ruby-prefix is set to $ACTUAL"
-      - name: Assert ruby version matches .ruby-version file
+          working-directory: tests/fixtures/ruby-version-dir
+          bundler: 'none'
+      - name: Assert ruby is installed from .ruby-version file
         run: |
           echo "Ruby version:"
           ruby --version
-          if ! ruby --version | grep -q "3\.2"; then
-            echo "FAIL: expected Ruby 3.2.x as specified in .ruby-version"
+          if ! ruby --version | grep -q "ruby 3\.2"; then
+            echo "FAIL: expected ruby 3.2.x (from .ruby-version file)"
             exit 1
           fi
-          echo "PASS: Ruby version matches .ruby-version file"
+          echo "PASS: ruby 3.2 is installed from .ruby-version file"
+      - name: Assert ruby-prefix output is set
+        env:
+          RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $RUBY_PREFIX"
+          if [ -z "$RUBY_PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is set to $RUBY_PREFIX"
