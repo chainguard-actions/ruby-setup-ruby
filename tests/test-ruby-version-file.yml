@@ -1,4 +1,4 @@
-name: Test basic Ruby setup
+name: Test Ruby setup from .ruby-version file
 on:
   workflow_dispatch:
 jobs:
@@ -6,35 +6,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create .ruby-version file
+        run: |
+          echo "3.2" > .ruby-version
+          cat .ruby-version
       - id: setup-ruby
         uses: .
         with:
-          ruby-version: '3.2'
+          # ruby-version not set — should read from .ruby-version
+          bundler: 'none'
       - name: Assert ruby-prefix output is set
         env:
           ACTUAL: ${{ steps.setup-ruby.outputs.ruby-prefix }}
         run: |
-          echo "actual ruby-prefix: $ACTUAL"
+          echo "ruby-prefix: $ACTUAL"
           if [ -z "$ACTUAL" ]; then
             echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
           echo "PASS: ruby-prefix is set to $ACTUAL"
-      - name: Assert ruby is on PATH and correct version
+      - name: Assert ruby version matches .ruby-version
         run: |
           echo "Ruby version:"
           ruby --version
           if ! ruby --version | grep -q "3\.2"; then
-            echo "FAIL: expected Ruby 3.2.x"
+            echo "FAIL: expected Ruby 3.2.x as specified in .ruby-version"
             exit 1
           fi
-          echo "PASS: Ruby 3.2 is installed"
-      - name: Assert gem is available
-        run: |
-          echo "Gem version:"
-          gem --version
-          if ! gem --version > /dev/null 2>&1; then
-            echo "FAIL: gem command not available"
-            exit 1
-          fi
-          echo "PASS: gem is available"
+          echo "PASS"
+      - name: Cleanup .ruby-version
+        if: always()
+        run: rm -f .ruby-version
