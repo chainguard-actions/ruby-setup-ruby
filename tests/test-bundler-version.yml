@@ -1,4 +1,4 @@
-name: Test basic Ruby setup
+name: Test Ruby setup with specific Bundler version
 on:
   workflow_dispatch:
 jobs:
@@ -10,7 +10,7 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
-          bundler: 'default'
+          bundler: '2.4.22'
           bundler-cache: 'false'
       - name: Assert ruby-prefix output is set
         env:
@@ -22,21 +22,13 @@ jobs:
             exit 1
           fi
           echo "PASS: ruby-prefix is set to $RUBY_PREFIX"
-      - name: Assert ruby is on PATH and correct version
+      - name: Assert bundler is installed with correct version
         run: |
-          echo "Ruby version:"
-          ruby --version
-          if ! ruby --version | grep -q "^ruby 3\.2"; then
-            echo "FAIL: expected Ruby 3.2.x"
+          echo "Bundler version:"
+          bundle --version
+          if ! bundle --version | grep -q "2\.4\.22"; then
+            echo "FAIL: expected Bundler 2.4.22"
+            bundle --version
             exit 1
           fi
-          echo "PASS: Ruby 3.2 is installed"
-      - name: Assert gem is available
-        run: |
-          echo "Gem version:"
-          gem --version
-          if ! gem --version > /dev/null 2>&1; then
-            echo "FAIL: gem not available"
-            exit 1
-          fi
-          echo "PASS: gem is available"
+          echo "PASS: Bundler 2.4.22 is installed"
