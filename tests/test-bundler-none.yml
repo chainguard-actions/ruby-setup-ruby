@@ -1,4 +1,4 @@
-name: Test basic Ruby setup
+name: Test setup-ruby with bundler none
 on:
   workflow_dispatch:
 jobs:
@@ -10,6 +10,7 @@ jobs:
         uses: .
         with:
           ruby-version: '3.2'
+          bundler: 'none'
       - name: Assert ruby-prefix output is set
         env:
           RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
@@ -19,8 +20,8 @@ jobs:
             echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix is set to $RUBY_PREFIX"
-      - name: Assert ruby is on PATH and correct version
+          echo "PASS: ruby-prefix is set"
+      - name: Assert ruby is on PATH
         run: |
           echo "Ruby version:"
           ruby --version
@@ -29,21 +30,12 @@ jobs:
             exit 1
           fi
           echo "PASS: Ruby 3.2 is installed"
-      - name: Assert gem is available
+      - name: Assert ruby can run basic code
         run: |
-          echo "Gem version:"
-          gem --version
-          if ! gem --version > /dev/null 2>&1; then
-            echo "FAIL: gem command not available"
+          echo "Running basic Ruby code:"
+          ruby -e 'puts "Hello from Ruby #{RUBY_VERSION}"'
+          if ! ruby -e 'exit 0'; then
+            echo "FAIL: ruby cannot execute code"
             exit 1
           fi
-          echo "PASS: gem is available"
-      - name: Assert bundler is available
-        run: |
-          echo "Bundler version:"
-          bundle --version
-          if ! bundle --version > /dev/null 2>&1; then
-            echo "FAIL: bundle command not available"
-            exit 1
-          fi
-          echo "PASS: bundler is available"
+          echo "PASS: ruby can execute code"

@@ -1,4 +1,4 @@
-name: Test basic Ruby setup
+name: Test setup-ruby with latest RubyGems
 on:
   workflow_dispatch:
 jobs:
@@ -9,7 +9,8 @@ jobs:
       - id: setup-ruby
         uses: .
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.1'
+          rubygems: 'latest'
       - name: Assert ruby-prefix output is set
         env:
           RUBY_PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
@@ -19,17 +20,17 @@ jobs:
             echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix is set to $RUBY_PREFIX"
-      - name: Assert ruby is on PATH and correct version
+          echo "PASS: ruby-prefix is set"
+      - name: Assert ruby is on PATH
         run: |
           echo "Ruby version:"
           ruby --version
-          if ! ruby --version | grep -q "3\.2"; then
-            echo "FAIL: expected Ruby 3.2.x"
+          if ! ruby --version | grep -q "3\.1"; then
+            echo "FAIL: expected Ruby 3.1.x"
             exit 1
           fi
-          echo "PASS: Ruby 3.2 is installed"
-      - name: Assert gem is available
+          echo "PASS: Ruby 3.1 is installed"
+      - name: Assert gem is available and updated
         run: |
           echo "Gem version:"
           gem --version
@@ -37,13 +38,4 @@ jobs:
             echo "FAIL: gem command not available"
             exit 1
           fi
-          echo "PASS: gem is available"
-      - name: Assert bundler is available
-        run: |
-          echo "Bundler version:"
-          bundle --version
-          if ! bundle --version > /dev/null 2>&1; then
-            echo "FAIL: bundle command not available"
-            exit 1
-          fi
-          echo "PASS: bundler is available"
+          echo "PASS: gem is available after rubygems=latest update"

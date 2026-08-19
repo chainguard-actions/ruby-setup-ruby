@@ -1,4 +1,4 @@
-name: Test working-directory and windows-toolchain options
+name: Test working-directory input
 on:
   workflow_dispatch:
 jobs:
@@ -8,26 +8,29 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Create working directory with .ruby-version
         run: |
-          mkdir -p /tmp/ruby-test-dir
-          echo "3.2" > /tmp/ruby-test-dir/.ruby-version
+          mkdir -p "$GITHUB_WORKSPACE/myapp"
+          echo "3.2" > "$GITHUB_WORKSPACE/myapp/.ruby-version"
       - id: action
         uses: .
         with:
-          ruby-version: '3.2'
-          working-directory: '/tmp/ruby-test-dir'
-          windows-toolchain: 'none'
-          bundler: 'none'
+          working-directory: './myapp'
       - name: Assert ruby-prefix output is set
         env:
-          RUBY_PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
         run: |
-          echo "ruby-prefix: $RUBY_PREFIX"
-          if [ -z "$RUBY_PREFIX" ]; then
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
             echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
           echo "PASS"
-      - name: Assert ruby is on PATH
+      - name: Assert Ruby is on PATH and correct version
         run: |
           ruby --version
-          echo "PASS: ruby is available"
+          RUBY_VER=$(ruby -e "puts RUBY_VERSION")
+          echo "Ruby version: $RUBY_VER"
+          if [[ "$RUBY_VER" != 3.2.* ]]; then
+            echo "FAIL: expected Ruby 3.2.x but got $RUBY_VER"
+            exit 1
+          fi
+          echo "PASS: correct Ruby version installed from working-directory .ruby-version"
