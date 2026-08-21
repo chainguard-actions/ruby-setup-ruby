@@ -1,4 +1,4 @@
-name: Test Ruby setup with bundler
+name: Test Ruby setup from .ruby-version file
 on:
   workflow_dispatch:
 jobs:
@@ -6,17 +6,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create a minimal Gemfile
+      - name: Create .ruby-version file
         run: |
-          cat > "$GITHUB_WORKSPACE/Gemfile" <<'EOF'
-          source 'https://rubygems.org'
-          gem 'json'
-          EOF
+          echo "3.2" > "$GITHUB_WORKSPACE/.ruby-version"
+          cat "$GITHUB_WORKSPACE/.ruby-version"
       - id: action
         uses: .
-        with:
-          ruby-version: '3.1'
-          bundler: 'latest'
+        # ruby-version not set — action reads from .ruby-version file
       - name: Assert ruby-prefix output is set
         env:
           PREFIX: ${{ steps.action.outputs.ruby-prefix }}
@@ -27,15 +23,11 @@ jobs:
             exit 1
           fi
           echo "PASS: ruby-prefix is '$PREFIX'"
-      - name: Assert bundler is available
-        run: |
-          bundle --version
-          echo "PASS: bundler is available"
-      - name: Assert ruby version is 3.1
+      - name: Assert ruby version matches .ruby-version
         run: |
           echo "ruby version: $(ruby --version)"
-          ruby --version | grep -q "ruby 3.1" || {
-            echo "FAIL: expected ruby 3.1.x"
+          ruby --version | grep -q "ruby 3.2" || {
+            echo "FAIL: expected ruby 3.2.x as specified in .ruby-version"
             exit 1
           }
           echo "PASS"

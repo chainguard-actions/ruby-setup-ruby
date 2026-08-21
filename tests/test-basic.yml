@@ -1,4 +1,4 @@
-name: Test basic ruby setup
+name: Test basic Ruby setup
 on:
   workflow_dispatch:
 jobs:
@@ -12,15 +12,23 @@ jobs:
           ruby-version: '3.2'
       - name: Assert ruby-prefix output is set
         env:
-          ACTUAL: ${{ steps.action.outputs.ruby-prefix }}
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
         run: |
-          echo "actual: $ACTUAL"
-          if [ -z "$ACTUAL" ]; then
-            echo "FAIL: ruby-prefix output was empty"
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
             exit 1
           fi
-          echo "PASS: ruby-prefix=$ACTUAL"
-      - name: Assert ruby is on PATH
+          echo "PASS: ruby-prefix is '$PREFIX'"
+      - name: Assert ruby is on PATH and correct version
         run: |
-          ruby --version
-          echo "PASS: ruby is available"
+          echo "ruby version: $(ruby --version)"
+          ruby --version | grep -q "ruby 3.2" || {
+            echo "FAIL: expected ruby 3.2.x"
+            exit 1
+          }
+          echo "PASS"
+      - name: Assert gem is available
+        run: |
+          gem --version
+          echo "PASS: gem is available"

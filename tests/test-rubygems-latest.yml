@@ -1,4 +1,4 @@
-name: Test self-hosted input
+name: Test Ruby setup with latest RubyGems
 on:
   workflow_dispatch:
 jobs:
@@ -9,8 +9,8 @@ jobs:
       - id: action
         uses: .
         with:
-          ruby-version: '3.2'
-          self-hosted: 'false'
+          ruby-version: '3.3'
+          rubygems: 'latest'
       - name: Assert ruby-prefix output is set
         env:
           PREFIX: ${{ steps.action.outputs.ruby-prefix }}
@@ -21,7 +21,16 @@ jobs:
             exit 1
           fi
           echo "PASS: ruby-prefix is '$PREFIX'"
-      - name: Assert ruby is available
+      - name: Assert ruby version is 3.3
         run: |
-          ruby --version
-          echo "PASS: ruby is available"
+          echo "ruby version: $(ruby --version)"
+          ruby --version | grep -q "ruby 3.3" || {
+            echo "FAIL: expected ruby 3.3.x"
+            exit 1
+          }
+          echo "PASS"
+      - name: Assert gem is available and updated
+        run: |
+          echo "gem version: $(gem --version)"
+          gem --version
+          echo "PASS: gem is available"
