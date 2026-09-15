@@ -1,0 +1,37 @@
+name: Test Ruby version from .ruby-version file
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup-ruby
+        uses: .
+        with:
+          working-directory: tests/fixtures/ruby-version-dir
+          bundler-cache: 'false'
+      - name: Assert ruby-prefix output is set
+        env:
+          PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is '$PREFIX'"
+      - name: Assert ruby binary is on PATH
+        run: |
+          which ruby
+          ruby --version
+          echo "PASS: ruby is available"
+      - name: Assert ruby version is 3.1.x
+        run: |
+          VERSION=$(ruby --version)
+          echo "ruby version: $VERSION"
+          if ! echo "$VERSION" | grep -q "^ruby 3\.1\."; then
+            echo "FAIL: expected ruby 3.1.x but got: $VERSION"
+            exit 1
+          fi
+          echo "PASS: ruby version is 3.1.x"

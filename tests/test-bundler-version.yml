@@ -1,0 +1,43 @@
+name: Test specific Bundler version installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup-ruby
+        uses: .
+        with:
+          ruby-version: '3.2'
+          bundler: '2.4.22'
+          bundler-cache: 'false'
+      - name: Assert ruby-prefix output is set
+        env:
+          PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is '$PREFIX'"
+      - name: Assert bundler is available
+        run: |
+          which bundle
+          BUNDLER_VERSION=$(bundle --version)
+          echo "bundler version: $BUNDLER_VERSION"
+          if [ -z "$BUNDLER_VERSION" ]; then
+            echo "FAIL: bundler version is empty"
+            exit 1
+          fi
+          echo "PASS: bundler is available with version $BUNDLER_VERSION"
+      - name: Assert bundler version is 2.4.22
+        run: |
+          BUNDLER_VERSION=$(bundle --version)
+          echo "bundler version: $BUNDLER_VERSION"
+          if ! echo "$BUNDLER_VERSION" | grep -q "2\.4\.22"; then
+            echo "FAIL: expected bundler 2.4.22 but got: $BUNDLER_VERSION"
+            exit 1
+          fi
+          echo "PASS: bundler version is 2.4.22"
