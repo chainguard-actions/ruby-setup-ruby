@@ -1,0 +1,34 @@
+name: Test Ruby setup from .ruby-version file
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create .ruby-version file
+        run: |
+          echo "3.2" > .ruby-version
+          cat .ruby-version
+      - id: setup-ruby
+        uses: .
+        # No ruby-version input — reads from .ruby-version file
+      - name: Assert ruby-prefix output is set
+        env:
+          PREFIX: ${{ steps.setup-ruby.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is '$PREFIX'"
+      - name: Assert ruby is on PATH and correct version from file
+        run: |
+          echo "Ruby version:"
+          ruby --version
+          if ! ruby --version | grep -q "ruby 3\.2"; then
+            echo "FAIL: expected Ruby 3.2.x (from .ruby-version file)"
+            exit 1
+          fi
+          echo "PASS: Ruby 3.2 installed from .ruby-version file"
