@@ -1,0 +1,49 @@
+name: Test Ruby setup with bundler cache
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Gemfile in workspace subdirectory
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/bundler-cache-test"
+          cat > "$GITHUB_WORKSPACE/bundler-cache-test/Gemfile" << 'EOF'
+          source 'https://rubygems.org'
+          gem 'rake'
+          EOF
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.2'
+          bundler-cache: 'true'
+          working-directory: bundler-cache-test
+      - name: Assert ruby-prefix output is set
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is set to '$PREFIX'"
+      - name: Assert Ruby is installed
+        run: |
+          echo "Ruby version:"
+          ruby --version
+          if ! ruby --version | grep -q "3\.2"; then
+            echo "FAIL: expected Ruby 3.2.x"
+            exit 1
+          fi
+          echo "PASS: Ruby 3.2 is installed"
+      - name: Assert rake gem is available via bundle exec
+        working-directory: bundler-cache-test
+        run: |
+          echo "Checking if rake is installed via bundler..."
+          if ! bundle exec rake --version > /dev/null 2>&1; then
+            echo "FAIL: rake not found via bundle exec"
+            exit 1
+          fi
+          echo "PASS: rake is available via bundle exec: $(bundle exec rake --version)"
