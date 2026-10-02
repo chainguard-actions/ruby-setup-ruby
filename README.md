@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v1.292.0 | [`v1.292.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.292.0) | [`4eb9f11`](https://github.com/ruby/setup-ruby/commit/4eb9f110bac952a8b68ecf92e3b5c7a987594ba6) |
+| v1.299.0 | [`v1.299.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.299.0) | [`3ff19f5`](https://github.com/ruby/setup-ruby/commit/3ff19f5e2baf30647122352b96108b1fbe250c64) |
 | v1.301.0 | [`v1.301.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.301.0) | [`4c56a21`](https://github.com/ruby/setup-ruby/commit/4c56a21280b36d862b5fc31348f463d60bdc55d5) |
 | v1.310.0 | [`v1.310.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.310.0) | [`afeafc3`](https://github.com/ruby/setup-ruby/commit/afeafc3d1ab54a631816aba4c914a0081c12ff2f) |
 | v1.311.0 | [`v1.311.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.311.0) | [`a99ac84`](https://github.com/ruby/setup-ruby/commit/a99ac844649df2596b52b4db087cfa0881b172af) |
