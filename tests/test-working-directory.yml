@@ -1,0 +1,37 @@
+name: Test working-directory input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create working directory with .ruby-version
+        run: |
+          mkdir -p /tmp/ruby-test-dir
+          echo "3.2" > /tmp/ruby-test-dir/.ruby-version
+      - id: action
+        uses: .
+        with:
+          working-directory: '/tmp/ruby-test-dir'
+      - name: Assert ruby-prefix output is set
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is '$PREFIX'"
+      - name: Assert ruby is on PATH and correct version
+        run: |
+          ruby --version
+          RUBY_VER=$(ruby --version)
+          echo "ruby version: $RUBY_VER"
+          if echo "$RUBY_VER" | grep -q "3\.2"; then
+            echo "PASS: ruby 3.2 is active as specified in working-directory/.ruby-version"
+          else
+            echo "FAIL: expected ruby 3.2 but got: $RUBY_VER"
+            exit 1
+          fi
