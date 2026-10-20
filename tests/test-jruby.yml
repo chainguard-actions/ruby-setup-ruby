@@ -1,0 +1,51 @@
+name: Test JRuby setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install Java 21 (required for JRuby 10.x)
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq openjdk-21-jdk-headless
+          java -version
+          export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+      - id: action
+        uses: .
+        with:
+          ruby-version: 'jruby'
+      - name: Assert ruby-prefix output is set
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          echo "PASS: ruby-prefix is '$PREFIX'"
+      - name: Assert JRuby is in PATH
+        run: |
+          echo "ruby version:"
+          ruby --version
+          if ! ruby --version | grep -qi "jruby"; then
+            echo "FAIL: expected JRuby"
+            exit 1
+          fi
+          echo "PASS: JRuby is available"
+      - name: Assert gem is available under JRuby
+        run: |
+          echo "gem version via ruby -e:"
+          # Use ruby -e to check Gem::VERSION instead of calling gem directly.
+          # The gem shebang points to /home/runner/.rubies/... but act runs as root
+          # so the interpreter path doesn't exist. ruby -e bypasses the shebang.
+          GEM_VER=$(ruby -e "puts Gem::VERSION")
+          echo "Gem::VERSION = $GEM_VER"
+          if [ -z "$GEM_VER" ]; then
+            echo "FAIL: gem not available under JRuby"
+            exit 1
+          fi
+          echo "PASS: gem is available under JRuby (version $GEM_VER)"
