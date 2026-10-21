@@ -1,0 +1,31 @@
+name: Test reading .tool-versions from working-directory
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create project dir with .tool-versions
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tv-project"
+          printf 'nodejs 20.0.0\nruby 3.3\n' > "$GITHUB_WORKSPACE/tv-project/.tool-versions"
+      - id: action
+        uses: .
+        with:
+          working-directory: tv-project
+      - name: Assert Ruby 3.3 selected
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          V="$(ruby -e 'print RUBY_VERSION')"
+          echo "RUBY_VERSION: $V"
+          case "$V" in
+            3.3.*) echo "PASS" ;;
+            *) echo "FAIL: expected 3.3.x"; exit 1 ;;
+          esac
