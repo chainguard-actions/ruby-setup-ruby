@@ -1,0 +1,40 @@
+name: Test rubygems latest update
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.3'
+          rubygems: latest
+          bundler: none
+      - name: Assert gem works from installed ruby and is at least 3.5
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output empty"
+            exit 1
+          fi
+          GEM="$(command -v gem)" || { echo "FAIL: gem not on PATH"; exit 1; }
+          echo "gem path: $GEM"
+          case "$GEM" in
+            "$PREFIX"/*) ;;
+            *) echo "FAIL: gem not from installed ruby prefix"; exit 1 ;;
+          esac
+          VER="$(gem --version)"
+          echo "gem --version: $VER"
+          MAJOR="${VER%%.*}"
+          REST="${VER#*.}"
+          MINOR="${REST%%.*}"
+          if [ "$MAJOR" -gt 3 ] || { [ "$MAJOR" -eq 3 ] && [ "$MINOR" -ge 5 ]; }; then
+            echo "PASS"
+          else
+            echo "FAIL: expected RubyGems >= 3.5"
+            exit 1
+          fi
