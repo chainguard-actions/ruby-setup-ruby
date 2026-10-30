@@ -1,0 +1,29 @@
+name: Test reading .ruby-version via working-directory
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create project with .ruby-version
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/rv-project"
+          echo "3.2.6" > "$GITHUB_WORKSPACE/rv-project/.ruby-version"
+      - id: action
+        uses: .
+        with:
+          working-directory: rv-project
+          bundler: none
+      - name: Assert version from .ruby-version
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          V="$(ruby -e 'print RUBY_VERSION')"
+          echo "RUBY_VERSION: $V"
+          if [ "$V" != "3.2.6" ]; then
+            echo "FAIL: expected 3.2.6 from .ruby-version"
+            exit 1
+          fi
+          echo "PASS"

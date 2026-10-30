@@ -1,0 +1,36 @@
+name: Test bundler-cache with cache-version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create minimal Gemfile project
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/cache-project"
+          printf "source 'https://rubygems.org'\n" > "$GITHUB_WORKSPACE/cache-project/Gemfile"
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.3'
+          bundler-cache: 'true'
+          cache-version: 'v-test-1'
+          working-directory: cache-project
+      - name: Assert bundle install ran
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ] || [ ! -x "$PREFIX/bin/ruby" ]; then
+            echo "FAIL: invalid ruby-prefix"
+            exit 1
+          fi
+          ls -la "$GITHUB_WORKSPACE/cache-project"
+          if [ ! -f "$GITHUB_WORKSPACE/cache-project/Gemfile.lock" ]; then
+            echo "FAIL: Gemfile.lock was not generated"
+            exit 1
+          fi
+          cd "$GITHUB_WORKSPACE/cache-project"
+          bundle check
+          echo "PASS"

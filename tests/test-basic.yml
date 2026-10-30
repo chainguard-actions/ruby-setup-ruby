@@ -1,0 +1,44 @@
+name: Test basic usage (ruby 3.3)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.3'
+          bundler: none
+      - name: Assert ruby-prefix output
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then
+            echo "FAIL: ruby-prefix output is empty"
+            exit 1
+          fi
+          if [ ! -x "$PREFIX/bin/ruby" ]; then
+            echo "FAIL: $PREFIX/bin/ruby not found or not executable"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert ruby on PATH is 3.3.x from prefix
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          which ruby
+          ruby -v
+          V="$(ruby -e 'print RUBY_VERSION')"
+          echo "RUBY_VERSION: $V"
+          case "$V" in
+            3.3.*) ;;
+            *) echo "FAIL: expected 3.3.x"; exit 1 ;;
+          esac
+          if [ "$(command -v ruby)" != "$PREFIX/bin/ruby" ]; then
+            echo "FAIL: ruby on PATH is not from prefix"
+            exit 1
+          fi
+          echo "PASS"

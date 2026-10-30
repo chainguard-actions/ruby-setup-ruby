@@ -1,0 +1,29 @@
+name: Test reading .tool-versions via working-directory
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create project with .tool-versions
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tv-project"
+          printf 'nodejs 20.0.0\nruby 3.4.1\n' > "$GITHUB_WORKSPACE/tv-project/.tool-versions"
+      - id: action
+        uses: .
+        with:
+          working-directory: tv-project
+          bundler: none
+      - name: Assert version from .tool-versions
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          V="$(ruby -e 'print RUBY_VERSION')"
+          echo "RUBY_VERSION: $V"
+          if [ "$V" != "3.4.1" ]; then
+            echo "FAIL: expected 3.4.1 from .tool-versions"
+            exit 1
+          fi
+          echo "PASS"

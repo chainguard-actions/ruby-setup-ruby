@@ -1,0 +1,33 @@
+name: Test bundler default uses Ruby's bundled Bundler
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create empty project dir
+        run: mkdir -p "$GITHUB_WORKSPACE/bundler-project"
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.3'
+          bundler: default
+          working-directory: bundler-project
+      - name: Assert bundler is available
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          which bundle
+          OUT="$(bundle -v)"
+          echo "bundle -v: $OUT"
+          case "$OUT" in
+            *"Bundler version 2."*|*"2."*) ;;
+            *) echo "FAIL: expected Bundler 2.x"; exit 1 ;;
+          esac
+          case "$(command -v bundle)" in
+            "$PREFIX"/*) ;;
+            *) echo "FAIL: bundle not from ruby prefix"; exit 1 ;;
+          esac
+          echo "PASS"

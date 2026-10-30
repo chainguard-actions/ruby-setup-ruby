@@ -1,0 +1,31 @@
+name: Test rubygems explicit version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          ruby-version: '3.3'
+          rubygems: '3.5.3'
+          bundler: none
+      - name: Assert RubyGems version is at least requested
+        env:
+          PREFIX: ${{ steps.action.outputs.ruby-prefix }}
+        run: |
+          echo "ruby-prefix: $PREFIX"
+          if [ -z "$PREFIX" ]; then echo "FAIL: empty ruby-prefix"; exit 1; fi
+          V="$(gem -v)"
+          echo "gem -v: $V"
+          if ! ruby -e 'exit(Gem::Version.new(ARGV[0]) >= Gem::Version.new("3.5.3") ? 0 : 1)' "$V"; then
+            echo "FAIL: expected RubyGems >= 3.5.3"
+            exit 1
+          fi
+          case "$(command -v gem)" in
+            "$PREFIX"/*) ;;
+            *) echo "FAIL: gem not from ruby prefix"; exit 1 ;;
+          esac
+          echo "PASS"
