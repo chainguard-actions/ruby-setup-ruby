@@ -1,6 +1,16 @@
 {
   "owner": "ruby",
   "repo": "setup-ruby",
-  "version": "",
-  "url": "https://github.com/ruby/setup-ruby"
+  "version": "v1.337.0",
+  "commit_sha": "a5612086821ed5ff914a94f49c9e4e6ee039fb72",
+  "url": "https://github.com/ruby/setup-ruby",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
+  "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
+  "test_agent_version": "2",
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/ruby/setup-ruby/v1.337.0/sha256-4b4ddcde12b0a60e1beb5d8b3120540df9c8258cdd5f65730a17dd5faa10dea0.tar.gz",
+    "sha256": "4b4ddcde12b0a60e1beb5d8b3120540df9c8258cdd5f65730a17dd5faa10dea0",
+    "size_bytes": 653708
+  }
 }
