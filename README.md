@@ -41,6 +41,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v1.340.0 | [`v1.340.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.340.0) | [`341b6d4`](https://github.com/ruby/setup-ruby/commit/341b6d4d1c7bdbe628940ab4e27cbdc9c97950cc) | [`HARDENING.md`](https://github.com/chainguard-actions/ruby-setup-ruby/blob/v1.340.0/HARDENING.md) |
 | v1.341.0 | [`v1.341.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.341.0) | [`20eb24b`](https://github.com/ruby/setup-ruby/commit/20eb24b0d509e2b9ed9b6d42ddfeb992915e0564) | [`HARDENING.md`](https://github.com/chainguard-actions/ruby-setup-ruby/blob/v1.341.0/HARDENING.md) |
 | v1.342.0 | [`v1.342.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.342.0) | [`f9c4492`](https://github.com/ruby/setup-ruby/commit/f9c4492e86def3e644ab32a0ef185eda5b0c20d0) | [`HARDENING.md`](https://github.com/chainguard-actions/ruby-setup-ruby/blob/v1.342.0/HARDENING.md) |
+| v1.343.0 | [`v1.343.0`](https://github.com/chainguard-actions/ruby-setup-ruby/tree/v1.343.0) | [`be3c7df`](https://github.com/ruby/setup-ruby/commit/be3c7df29b3349ec6bcfc6b4792f1cf9f5237d18) | [`HARDENING.md`](https://github.com/chainguard-actions/ruby-setup-ruby/blob/v1.343.0/HARDENING.md) |
 
 ## Privacy
 
